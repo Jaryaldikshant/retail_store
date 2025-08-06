@@ -1,9 +1,6 @@
-# Build Stage
+# ----------- Build Stage -----------
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023 AS build-env
 
-# We tell DNF not to install Recommends and Suggests packages, which are
-# weak dependencies in DNF terminology, thus keeping our installed set of
-# packages as minimal as possible.
 RUN dnf --setopt=install_weak_deps=False install -q -y \
     git \
     golang \
@@ -23,16 +20,13 @@ COPY . .
 
 RUN go build -o main main.go
 
-# Final stage
+# ----------- Final Stage -----------
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 
 ENV APPUSER=appuser
 ENV APPUID=1000
 ENV APPGID=1000
 
-# We tell DNF not to install Recommends and Suggests packages, which are
-# weak dependencies in DNF terminology, thus keeping our installed set of
-# packages as minimal as possible.
 RUN dnf --setopt=install_weak_deps=False install -q -y \
     shadow-utils \
     && \
@@ -49,8 +43,6 @@ WORKDIR /app
 USER appuser
 
 COPY --chown=appuser:appuser --from=build-env /appsrc/main /app/
-
-COPY ./ATTRIBUTION.md ./LICENSES.md
 
 ENV GIN_MODE=release
 

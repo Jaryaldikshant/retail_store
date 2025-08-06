@@ -1,17 +1,19 @@
+# ----------- Build Stage -----------
 FROM node:20-alpine AS build
+
 WORKDIR /usr/src/app
+
 COPY --chown=node:node package*.json ./
 COPY --chown=node:node . .
+
 RUN yarn install --frozen-lockfile
 RUN yarn build
+
 USER node
 
-
+# ----------- Package Stage -----------
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 
-# We tell DNF not to install Recommends and Suggests packages, which are
-# weak dependencies in DNF terminology, thus keeping our installed set of
-# packages as minimal as possible.
 RUN dnf --setopt=install_weak_deps=False install -q -y \
     nodejs20 \
     shadow-utils \

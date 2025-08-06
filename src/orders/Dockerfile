@@ -1,18 +1,14 @@
-# Build Stage
+# ----------- Build Stage -----------
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023 AS build-env
 
-# We tell DNF not to install Recommends and Suggests packages, keeping our
-# installed set of packages as minimal as possible.
+# Install only required dependencies without weak suggestions
 RUN dnf --setopt=install_weak_deps=False install -q -y \
     maven \
     java-21-amazon-corretto-headless \
     which \
     tar \
     gzip \
-    && \
-    dnf clean all
-
-ARG JAR_PATH
+    && dnf clean all
 
 VOLUME /tmp
 WORKDIR /
@@ -21,30 +17,30 @@ COPY .mvn .mvn
 COPY mvnw .
 COPY pom.xml .
 
+# Preload dependencies
 RUN ./mvnw dependency:go-offline -B -q
 
+# Copy app source
 COPY ./src ./src
 
+# Build app
 RUN ./mvnw -DskipTests package -q && \
     mv /target/orders-0.0.1-SNAPSHOT.jar /app.jar
 
-# Package Stage
+# ----------- Package Stage -----------
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 
-# We tell DNF not to install Recommends and Suggests packages, which are
-# weak dependencies in DNF terminology, thus keeping our installed set of
-# packages as minimal as possible.
+# Install only needed runtime packages
 RUN dnf --setopt=install_weak_deps=False install -q -y \
     java-21-amazon-corretto-headless \
     shadow-utils \
-    && \
-    dnf clean all
+    && dnf clean all
 
-# use curl-full to use "telnet://" scheme
-# https://docs.aws.amazon.com/linux/al2023/ug/curl-minimal.html
+# Enable curl with telnet support
 RUN dnf -q -y swap libcurl-minimal libcurl-full \
     && dnf -q -y swap curl-minimal curl-full
 
+# Setup app user
 ENV APPUSER=appuser
 ENV APPUID=1000
 ENV APPGID=1000
@@ -62,7 +58,7 @@ ENV SPRING_PROFILES_ACTIVE=prod
 WORKDIR /app
 USER appuser
 
-# COPY ./ATTRIBUTION.md ./LICENSES.md
+# Copy built app
 COPY --chown=appuser:appuser --from=build-env /app.jar .
 
 EXPOSE 8080

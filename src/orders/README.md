@@ -1,80 +1,59 @@
-# AWS Containers Retail Sample - Orders Service
+# 📦 Orders Service - AWS Retail Sample
 
-<!-- GitOps Test: Multi-service deploy test - Orders -->
+This is a sample **Orders Service** built with **Java**. It provides an API to store customer orders, and uses **MySQL** as the default database.
+
+---
+
+## 🛠️ Tech Stack
 
 | Language | Persistence |
-| -------- | ----------- |
-| Java     | MySQL       |
-| -------- | ----------- |
+|----------|-------------|
 | Java     | MySQL       |
 
-This service provides an API for storing orders. Data is stored in MySQL.
+---
 
-## Configuration
+## ⚙️ Configuration
 
-The following environment variables are available for configuring the service:
+Use the following environment variables to configure the service:
 
-| Name                                          | Description                                                                             | Default       |
-| --------------------------------------------- | --------------------------------------------------------------------------------------- | ------------- |
-| `PORT`                                        | The port which the server will listen on                                                | `8080`        |
-| `RETAIL_CHECKOUT_PERSISTENCE_PROVIDER`        | The persistence provider to use, can be `in-memory` or `postgres`.                      | `in-memory`   |
-| `RETAIL_ORDERS_PERSISTENCE_POSTGRES_ENDPOINT` | The postgres database endpoint.                                                         | `""`          |
-| `RETAIL_ORDERS_PERSISTENCE_POSTGRES_NAME`     | The postgres database name                                                              | `""`          |
-| `RETAIL_ORDERS_PERSISTENCE_POSTGRES_USERNAME` | Username to authenticate with postgres database.                                        | `""`          |
-| `RETAIL_ORDERS_PERSISTENCE_POSTGRES_PASSWORD` | Password to authenticate with postgres database.                                        | `""`          |
-| `RETAIL_ORDERS_MESSAGING_PROVIDER`            | The messaging provider to use to publish events. Can be `in-memory`, `sqs`, `rabbitmq`. | `"in-memory"` |
-| `RETAIL_ORDERS_MESSAGING_SQS_TOPIC`           | The name of the SQS topic to publish events to (SQS messaging provider)                 | `""`          |
-| `RETAIL_ORDERS_MESSAGING_RABBITMQ_ADDRESSES`  | Endpoints for RabbitMQ messaging provider, format `host:port`                           | `""`          |
-| `RETAIL_ORDERS_MESSAGING_RABBITMQ_USERNAME`   | Username for RabbitMQ messaging provider                                                | `""`          |
-| `RETAIL_ORDERS_MESSAGING_RABBITMQ_PASSWORD`   | Password for RabbitMQ messaging provider                                                | `""`          |
+| Variable Name                                 | Description                                                                           | Default       |
+|----------------------------------------------|---------------------------------------------------------------------------------------|---------------|
+| `PORT`                                       | Port the app runs on                                                                  | `8080`        |
+| `RETAIL_CHECKOUT_PERSISTENCE_PROVIDER`       | Persistence provider: `in-memory` or `postgres`                                       | `in-memory`   |
+| `RETAIL_ORDERS_PERSISTENCE_POSTGRES_ENDPOINT`| PostgreSQL database endpoint                                                          | `""`          |
+| `RETAIL_ORDERS_PERSISTENCE_POSTGRES_NAME`    | PostgreSQL database name                                                              | `""`          |
+| `RETAIL_ORDERS_PERSISTENCE_POSTGRES_USERNAME`| Username for PostgreSQL                                                               | `""`          |
+| `RETAIL_ORDERS_PERSISTENCE_POSTGRES_PASSWORD`| Password for PostgreSQL                                                               | `""`          |
+| `RETAIL_ORDERS_MESSAGING_PROVIDER`           | Messaging provider: `in-memory`, `sqs`, or `rabbitmq`                                 | `"in-memory"` |
+| `RETAIL_ORDERS_MESSAGING_SQS_TOPIC`          | SQS topic name for event publishing (if using SQS)                                   | `""`          |
+| `RETAIL_ORDERS_MESSAGING_RABBITMQ_ADDRESSES` | RabbitMQ host and port (format: `host:port`)                                          | `""`          |
+| `RETAIL_ORDERS_MESSAGING_RABBITMQ_USERNAME`  | RabbitMQ username                                                                     | `""`          |
+| `RETAIL_ORDERS_MESSAGING_RABBITMQ_PASSWORD`  | RabbitMQ password                                                                     | `""`          |
 
-## Endpoints
+---
 
-Several "utility" endpoints are provided with useful functionality for various scenarios:
+## 🧪 Utility Endpoints (Chaos Testing)
 
-| Method   | Name                     | Description                                                                        |
-| -------- | ------------------------ | ---------------------------------------------------------------------------------- |
-| `POST`   | `/chaos/status/{code}`   | All HTTP requests to API paths will return the given HTTP status code              |
-| `DELETE` | `/chaos/status`          | Disables the HTTP status response above                                            |
-| `POST`   | `/chaos/latency/{delay}` | All HTTP requests to API paths will have the specified delay added in milliseconds |
-| `DELETE` | `/chaos/latency`         | Disables the HTTP response latency above                                           |
-| `POST`   | `/chaos/health`          | Causes all health check requests to fail                                           |
-| `DELETE` | `/chaos/health`          | Returns the health check to its default behavior                                   |
+These are helpful for testing error and delay scenarios:
 
-## Running
+| Method   | Endpoint                   | Description                                                   |
+|----------|----------------------------|---------------------------------------------------------------|
+| `POST`   | `/chaos/status/{code}`     | Forces all responses to return the given HTTP status code     |
+| `DELETE` | `/chaos/status`            | Restores default status behavior                              |
+| `POST`   | `/chaos/latency/{delay}`   | Adds delay (in ms) to all responses                           |
+| `DELETE` | `/chaos/latency`           | Removes the artificial delay                                  |
+| `POST`   | `/chaos/health`            | Simulates failed health check                                 |
+| `DELETE` | `/chaos/health`            | Restores normal health check behavior                         |
 
-There are two main options for running the service:
+---
 
-### Local
+## 🚀 Running the Service
 
-Pre-requisites:
+### 🔹 Run Locally
 
+**Requirements:**
 - Java 21 installed
 
-Run the Spring Boot application like so:
-
-```
-./mvnw spring-boot:run
-```
-
-Test access:
-
-```
-curl localhost:8080/orders
-```
-
-### Docker
-
-A `docker-compose.yml` file is included to run the service in Docker:
-
-```
-docker compose up
-```
-
-Test the application by visiting `http://localhost:8080` in a web browser.
-
-To clean up:
-
-```
-docker compose down
-```
+**Steps:**
+```bash
+./mvnw

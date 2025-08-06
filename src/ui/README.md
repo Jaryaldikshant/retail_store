@@ -1,81 +1,66 @@
-# AWS Containers Retail Sample - UI Service
+# 🖥️ UI Service - AWS Retail Sample
 
-<!-- GitOps Test: Testing deploy-simple.yml workflow -->
+This is the **frontend service** for the AWS Retail Sample application. It serves the HTML user interface and acts as a gateway that aggregates calls to the backend API services (catalog, cart, orders, checkout).
+
+---
+
+## 🛠️ Tech Stack
 
 | Language | Persistence |
-| -------- | ----------- |
+|----------|-------------|
 | Java     | N/A         |
 
-This service provides the frontend for the retail store, serving the HTML UI and aggregating calls to the backend API components.
+---
 
-## Configuration
+## ⚙️ Configuration
 
-The following environment variables are available for configuring the service:
+Configure the service using the environment variables below:
 
-| Name                              | Description                                                                                            | Default                 |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------- |
-| `PORT`                            | The port which the server will listen on                                                               | `8080`                  |
-| `RETAIL_UI_THEME`                 | Name of the theme for the UI, valid values are `default`, `green`, `orange`                            | `"default"`             |
-| `RETAIL_UI_DISABLE_DEMO_WARNINGS` | Disable the UI messages warning about demonstration content                                            | `false`                 |
-| `RETAIL_UI_PRODUCT_IMAGES_PATH`   | Overrides the location where the sample product images are sourced from to use the specified file path | ``                      |
-| `RETAIL_UI_ENDPOINTS_CATALOG`     | The endpoint of the catalog API. If set to `false` uses a mock implementation                          | `false`                 |
-| `RETAIL_UI_ENDPOINTS_CARTS`       | The endpoint of the carts API. If set to `false` uses a mock implementation                            | `false`                 |
-| `RETAIL_UI_ENDPOINTS_ORDERS`      | The endpoint of the orders API. If set to `false` uses a mock implementation                           | `false`                 |
-| `RETAIL_UI_ENDPOINTS_CHECKOUT`    | The endpoint of the checkout API. If set to `false` uses a mock implementation                         | `false`                 |
-| `RETAIL_UI_CHAT_ENABLED`          | Enable the chat bot UI                                                                                 | `false`                 |
-| `RETAIL_UI_CHAT_PROVIDER`         | The chat provider to use, value values are `bedrock`, `openai`, `mock`                                 | `""`                    |
-| `RETAIL_UI_CHAT_MODEL`            | The chat model to use, depends on the provider.                                                        | `""`                    |
-| `RETAIL_UI_CHAT_TEMPERATURE`      | Model temperature                                                                                      | `0.6`                   |
-| `RETAIL_UI_CHAT_MAX_TOKENS`       | Model maximum response tokens                                                                          | `300`                   |
-| `RETAIL_UI_CHAT_PROMPT`           | Model system prompt                                                                                    | `(see source)`          |
-| `RETAIL_UI_CHAT_BEDROCK_REGION`   | Amazon Bedrock region                                                                                  | `""`                    |
-| `RETAIL_UI_CHAT_OPENAI_BASE_URL`  | Base URL for OpenAI endpoint                                                                           | `http://localhost:8888` |
-| `RETAIL_UI_CHAT_OPENAI_API_KEY`   | API key for OpenAI endpoint                                                                            | `""`                    |
+| Variable Name                          | Description                                                                 | Default                  |
+|----------------------------------------|-----------------------------------------------------------------------------|--------------------------|
+| `PORT`                                 | Port the service listens on                                                 | `8080`                   |
+| `RETAIL_UI_THEME`                      | UI theme: `default`, `green`, `orange`                                     | `default`                |
+| `RETAIL_UI_DISABLE_DEMO_WARNINGS`      | Set to `true` to hide demo warning banners                                 | `false`                  |
+| `RETAIL_UI_PRODUCT_IMAGES_PATH`        | Custom path for product images                                             |                          |
+| `RETAIL_UI_ENDPOINTS_CATALOG`          | Catalog API endpoint (`false` to use mock)                                 | `false`                  |
+| `RETAIL_UI_ENDPOINTS_CARTS`            | Carts API endpoint (`false` to use mock)                                   | `false`                  |
+| `RETAIL_UI_ENDPOINTS_ORDERS`           | Orders API endpoint (`false` to use mock)                                  | `false`                  |
+| `RETAIL_UI_ENDPOINTS_CHECKOUT`         | Checkout API endpoint (`false` to use mock)                                | `false`                  |
+| `RETAIL_UI_CHAT_ENABLED`               | Enable chatbot UI                                                          | `false`                  |
+| `RETAIL_UI_CHAT_PROVIDER`              | Chat provider: `bedrock`, `openai`, `mock`                                 | `""`                     |
+| `RETAIL_UI_CHAT_MODEL`                 | Model to use for chat                                                      | `""`                     |
+| `RETAIL_UI_CHAT_TEMPERATURE`           | Model temperature                                                          | `0.6`                    |
+| `RETAIL_UI_CHAT_MAX_TOKENS`            | Max response tokens for chat model                                         | `300`                    |
+| `RETAIL_UI_CHAT_PROMPT`                | Chat model prompt (system message)                                         | `(see source)`           |
+| `RETAIL_UI_CHAT_BEDROCK_REGION`        | AWS region for Bedrock                                                     | `""`                     |
+| `RETAIL_UI_CHAT_OPENAI_BASE_URL`       | OpenAI base URL                                                            | `http://localhost:8888`  |
+| `RETAIL_UI_CHAT_OPENAI_API_KEY`        | API key for OpenAI                                                         | `""`                     |
 
-## Endpoints
+---
 
-Several "utility" endpoints are provided with useful functionality for various scenarios:
+## 🧪 Utility Endpoints
 
-| Method | Name                           | Description                                                                 |
-| ------ | ------------------------------ | --------------------------------------------------------------------------- |
-| `GET`  | `/utility/status/{code}`       | Returns HTTP response with given HTTP status code                           |
-| `GET`  | `/utility/headers`             | Print the HTTP headers of the inbound request                               |
-| `GET`  | `/utility/panic`               | Shutdown the application with an error code                                 |
-| `POST` | `/utility/echo`                | Write back the POST payload sent                                            |
-| `POST` | `/utility/store`               | Write the payload to a file and return a hash                               |
-| `GET`  | `/utility/store/{hash}`        | Return the payload from the file system previously written                  |
-| `GET`  | `/utility/stress/{iterations}` | Stress the CPU with the number of iterations increasing the CPU consumption |
+These endpoints help with diagnostics and testing:
 
-## Running
+| Method | Endpoint                        | Description                                                                 |
+|--------|----------------------------------|-----------------------------------------------------------------------------|
+| `GET`  | `/utility/status/{code}`        | Returns the specified HTTP status code                                      |
+| `GET`  | `/utility/headers`              | Displays incoming request headers                                           |
+| `GET`  | `/utility/panic`                | Simulates a crash by shutting down the app                                 |
+| `POST` | `/utility/echo`                 | Echoes back the POST request payload                                       |
+| `POST` | `/utility/store`                | Saves payload to file and returns its hash                                 |
+| `GET`  | `/utility/store/{hash}`         | Retrieves stored payload by hash                                           |
+| `GET`  | `/utility/stress/{iterations}`  | Stress test: consumes CPU for the given number of iterations                |
 
-There are two main options for running the service:
+---
 
-### Local
+## 🚀 Running the Service
 
-Pre-requisites:
+### 🔹 Run Locally
 
-- Java 21 installed
+**Requirements:**
+- Java 21
 
-Run the Spring Boot application like so:
-
-```
+**Steps:**
+```bash
 ./mvnw spring-boot:run
-```
-
-Test the application by visiting `http://localhost:8080` in a web browser.
-
-### Docker
-
-A `docker-compose.yml` file is included to run the service in Docker:
-
-```
-docker compose up
-```
-
-Test the application by visiting `http://localhost:8080` in a web browser.
-
-To clean up:
-
-```
-docker compose down
-```

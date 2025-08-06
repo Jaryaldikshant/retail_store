@@ -1,82 +1,55 @@
-# AWS Containers Retail Sample - Catalog Service
+# 📦 Catalog Service - AWS Retail Sample
 
-<!-- GitOps Test: Final workflow validation -->
+This is a sample **Catalog Service** built with **Go**. It provides an API to retrieve product catalog information, stored in a **MySQL** database.
+
+---
+
+## 🛠️ Tech Stack
 
 | Language | Persistence |
-| -------- | ----------- |
+|----------|-------------|
 | Go       | MySQL       |
 
-This service provides an API for retrieving product catalog information. Data is stored in a MySQL database.
+---
 
-## Configuration
+## ⚙️ Configuration
 
-The following environment variables are available for configuring the service:
+You can use the following environment variables to configure the service:
 
-| Name                                       | Description                                                     | Default        |
-| ------------------------------------------ | --------------------------------------------------------------- | -------------- |
-| PORT                                       | The port which the server will listen on                        | `8080`         |
-| RETAIL_CATALOG_PERSISTENCE_PROVIDER        | The persistence provider to use, can be `in-memory` or `mysql`. | `in-memory`    |
-| RETAIL_CATALOG_PERSISTENCE_ENDPOINT        | Database endpoint URL                                           | `""`           |
-| RETAIL_CATALOG_PERSISTENCE_DB_NAME         | Database name                                                   | `catalogdb`    |
-| RETAIL_CATALOG_PERSISTENCE_USER            | Database user                                                   | `catalog_user` |
-| RETAIL_CATALOG_PERSISTENCE_PASSWORD        | Database password                                               | `""`           |
-| RETAIL_CATALOG_PERSISTENCE_CONNECT_TIMEOUT | Database connection timeout in seconds                          | `5`            |
+| Variable Name                                 | Description                                                    | Default        |
+|----------------------------------------------|----------------------------------------------------------------|----------------|
+| `PORT`                                       | Port the service runs on                                       | `8080`         |
+| `RETAIL_CATALOG_PERSISTENCE_PROVIDER`        | Use `in-memory` or `mysql` as the backend                      | `in-memory`    |
+| `RETAIL_CATALOG_PERSISTENCE_ENDPOINT`        | MySQL database endpoint URL                                    | `""`           |
+| `RETAIL_CATALOG_PERSISTENCE_DB_NAME`         | Name of the MySQL database                                     | `catalogdb`    |
+| `RETAIL_CATALOG_PERSISTENCE_USER`            | MySQL user name                                                | `catalog_user` |
+| `RETAIL_CATALOG_PERSISTENCE_PASSWORD`        | MySQL password                                                 | `""`           |
+| `RETAIL_CATALOG_PERSISTENCE_CONNECT_TIMEOUT` | Connection timeout (in seconds)                                | `5`            |
 
-## Endpoints
+---
 
-Several "utility" endpoints are provided with useful functionality for various scenarios:
+## 🧪 Utility Endpoints (Chaos Testing)
 
-| Method   | Name                     | Description                                                                        |
-| -------- | ------------------------ | ---------------------------------------------------------------------------------- |
-| `POST`   | `/chaos/status/{code}`   | All HTTP requests to API paths will return the given HTTP status code              |
-| `DELETE` | `/chaos/status`          | Disables the HTTP status response above                                            |
-| `POST`   | `/chaos/latency/{delay}` | All HTTP requests to API paths will have the specified delay added in milliseconds |
-| `DELETE` | `/chaos/latency`         | Disables the HTTP response latency above                                           |
-| `POST`   | `/chaos/health`          | Causes all health check requests to fail                                           |
-| `DELETE` | `/chaos/health`          | Returns the health check to its default behavior                                   |
+You can simulate failures or delays using these endpoints:
 
-## Running
+| Method   | Endpoint                   | Description                                                   |
+|----------|----------------------------|---------------------------------------------------------------|
+| `POST`   | `/chaos/status/{code}`     | Forces all responses to return the specified status code      |
+| `DELETE` | `/chaos/status`            | Resets status responses to normal                             |
+| `POST`   | `/chaos/latency/{delay}`   | Adds a delay (in ms) to all responses                         |
+| `DELETE` | `/chaos/latency`           | Removes the added delay                                       |
+| `POST`   | `/chaos/health`            | Simulates a failed health check                               |
+| `DELETE` | `/chaos/health`            | Resets health check to normal                                 |
 
-There are two main options for running the service:
+---
 
-### Local
+## 🚀 Running the Service
 
-Note: You must already have a MySQL database running
+### 🔹 Run Locally
 
-Build the binary as follows:
+> ⚠️ Make sure a MySQL instance is already running.
 
-```
+**Steps:**
+```bash
 go build -o main main.go
-```
-
-Then run it:
-
-```
 ./main
-```
-
-Test access:
-
-```
-curl localhost:8080/catalogue
-```
-
-### Docker
-
-A `docker-compose.yml` file is included to run the service in Docker, including a MySQL database:
-
-```
-DB_PASSWORD="testing" docker compose up
-```
-
-Test access:
-
-```
-curl localhost:8080/catalogue
-```
-
-To clean up:
-
-```
-docker compose down
-```

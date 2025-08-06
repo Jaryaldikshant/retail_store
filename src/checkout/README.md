@@ -1,68 +1,53 @@
-# AWS Containers Retail Sample - Checkout Service
+# 🛍️ Checkout Service - AWS Retail Sample
 
-<!-- GitOps Test: Testing improved change detection workflow -->
+This is a sample **Checkout Service** built with **Node.js**. It stores customer checkout data using **Redis**.
+
+---
+
+## 🛠️ Tech Stack
 
 | Language | Persistence |
-| -------- | ----------- |
-| Node     | Redis       |
+|----------|-------------|
+| Node.js  | Redis       |
 
-This service provides an API for storing customer data during the checkout process. Data is stored in Redis.
+---
 
-## Configuration
+## ⚙️ Configuration
 
-The following environment variables are available for configuring the service:
+You can customize the service using these environment variables:
 
-| Name                                    | Description                                                              | Default     |
-| --------------------------------------- | ------------------------------------------------------------------------ | ----------- |
-| `PORT`                                  | The port which the server will listen on                                 | `8080`      |
-| `RETAIL_CHECKOUT_PERSISTENCE_PROVIDER`  | The persistence provider to use, can be `in-memory` or `redis`.          | `in-memory` |
-| `RETAIL_CHECKOUT_PERSISTENCE_REDIS_URL` | The endpoint of the Redis server used to store state.                    | `""`        |
-| `RETAIL_CHECKOUT_ENDPOINTS_ORDERS`      | The endpoint of the orders API. If empty uses a mock implementation      | `""`        |
-| `RETAIL_CHECKOUT_SHIPPING_NAME_PREFIX`  | A string prefix that can be applied to the names of the shipping options | `""`        |
+| Variable Name                              | Description                                                              | Default      |
+|-------------------------------------------|--------------------------------------------------------------------------|--------------|
+| `PORT`                                     | Port the app runs on                                                     | `8080`       |
+| `RETAIL_CHECKOUT_PERSISTENCE_PROVIDER`    | Storage option: `in-memory` or `redis`                                   | `in-memory`  |
+| `RETAIL_CHECKOUT_PERSISTENCE_REDIS_URL`   | Redis server URL                                                         | `""`         |
+| `RETAIL_CHECKOUT_ENDPOINTS_ORDERS`        | Orders API endpoint (uses mock if empty)                                 | `""`         |
+| `RETAIL_CHECKOUT_SHIPPING_NAME_PREFIX`    | Prefix to apply to shipping option names                                 | `""`         |
 
-## Endpoints
+---
 
-Several "utility" endpoints are provided with useful functionality for various scenarios:
+## 🧪 Utility Endpoints (Chaos Testing)
 
-| Method   | Name                     | Description                                                                        |
-| -------- | ------------------------ | ---------------------------------------------------------------------------------- |
-| `POST`   | `/chaos/status/{code}`   | All HTTP requests to API paths will return the given HTTP status code              |
-| `DELETE` | `/chaos/status`          | Disables the HTTP status response above                                            |
-| `POST`   | `/chaos/latency/{delay}` | All HTTP requests to API paths will have the specified delay added in milliseconds |
-| `DELETE` | `/chaos/latency`         | Disables the HTTP response latency above                                           |
-| `POST`   | `/chaos/health`          | Causes all health check requests to fail                                           |
-| `DELETE` | `/chaos/health`          | Returns the health check to its default behavior                                   |
+You can simulate issues or delays using the following endpoints:
 
-## Running
+| Method   | Endpoint                   | Description                                                   |
+|----------|----------------------------|---------------------------------------------------------------|
+| `POST`   | `/chaos/status/{code}`     | Forces all responses to return the given HTTP status code     |
+| `DELETE` | `/chaos/status`            | Resets to normal behavior                                     |
+| `POST`   | `/chaos/latency/{delay}`   | Adds delay (in ms) to all responses                           |
+| `DELETE` | `/chaos/latency`           | Removes the artificial delay                                  |
+| `POST`   | `/chaos/health`            | Simulates a failed health check                               |
+| `DELETE` | `/chaos/health`            | Restores normal health check behavior                         |
 
-There are two main options for running the service:
+---
 
-### Local
+## 🚀 Running the Service
 
-Pre-requisites:
+### 🔹 Run Locally
 
-- Node.JS >= 16 installed
+**Requirements:**
+- Node.js 16 or higher
 
-Run the application like so:
-
-```
+**Steps:**
+```bash
 yarn start
-```
-
-The API endpoint will be available at `http://localhost:8080`.
-
-### Docker
-
-A `docker-compose.yml` file is included to run the service in Docker:
-
-```
-docker compose up
-```
-
-The API endpoint will be available at `http://localhost:8080`.
-
-To clean up:
-
-```
-docker compose down
-```
